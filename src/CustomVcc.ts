@@ -42,6 +42,8 @@ export default class CustomVCC {
   private themeCallback?: (theme: Theme) => void;
   private updateCallback?: (props: VccProps) => void;
 
+  private idempotencySkips: string[] = [];
+
   constructor() {
     // Set the VCC's key for communicating back to the parent
     try {
@@ -78,9 +80,19 @@ export default class CustomVCC {
 ////////////////////////////////////////////////////////////////////////////////
 // Mutations
   public change(newValue: any) {
+    // Invoke the update callback immediately and tag the update so we can skip
+    // it when it comes back around
+    const idempotencyKey = uuid.v4();
+    this.idempotencySkips.push(idempotencyKey);
+
+    this.props.value = newValue;
+    if (this.updateCallback) {
+      this.updateCallback(this.props);
+    }
+
     this.postMessage(IPCEvent.CHANGE, {
       value: newValue,
-    });
+    }, idempotencyKey);
   }
 
   public save() {
@@ -116,12 +128,19 @@ export default class CustomVCC {
       }
 
       const {
+        _idempotencyKey,
         event,
         payload,
       } = data;
 
       if (event === IPCEvent.PROPS_UPDATED) {
         this.props = payload;
+
+        if (_idempotencyKey && this.idempotencySkips.find(id => id === _idempotencyKey)) {
+          this.idempotencySkips = this.idempotencySkips.filter(id => id !== _idempotencyKey);
+          return;
+        }
+
         if (this.updateCallback) {
           this.updateCallback(this.props);
         }
@@ -148,11 +167,12 @@ export default class CustomVCC {
     });
   }
 
-  private postMessage(event: string, payload?: any) {
+  private postMessage(event: string, payload?: any, idempotencyKey?: string) {
     if (window.parent) {
       window.parent.postMessage({
         _type: IPCScope,
         _key: this.props.variableName,
+        _idempotencyKey: idempotencyKey,
         event,
         payload: payload || null,
       }, '*');
