@@ -21,7 +21,8 @@ enum IPCEvent {
 }
 
 export default class CustomVCC {
-  private props: VccProps = {
+  // tslint:disable-next-line: variable-name
+  private _props: VccProps = {
     type: '',
     name: '',
     value: null,
@@ -30,11 +31,18 @@ export default class CustomVCC {
     options: {},
     collaborationDecoration: {},
   };
+  public get props(): VccProps {
+    return this._props;
+  }
 
-  private theme: Theme = {
+  // tslint:disable-next-line: variable-name
+  private _theme: Theme = {
     colors: {},
     mixins: {},
   };
+  public get theme(): Theme {
+    return this._theme;
+  }
 
   private currentModalId?: string;
   private modalCallback?: (returnValue: any) => void;
@@ -85,7 +93,7 @@ export default class CustomVCC {
     const idempotencyKey = uuid.v4();
     this.idempotencySkips.push(idempotencyKey);
 
-    this.props.value = newValue;
+    this._props.value = newValue;
     if (this.updateCallback) {
       this.updateCallback(this.props);
     }
@@ -134,7 +142,7 @@ export default class CustomVCC {
       } = data;
 
       if (event === IPCEvent.PROPS_UPDATED) {
-        this.props = payload;
+        this._props = payload;
 
         if (_idempotencyKey && this.idempotencySkips.find(id => id === _idempotencyKey)) {
           this.idempotencySkips = this.idempotencySkips.filter(id => id !== _idempotencyKey);
@@ -147,7 +155,7 @@ export default class CustomVCC {
       }
 
       if (event === IPCEvent.THEME_SET) {
-        this.theme = payload;
+        this._theme = payload;
         if (this.themeCallback) {
           this.themeCallback(this.theme);
         }
