@@ -1,0 +1,161 @@
+import * as uuid from 'uuid';
+
+import { VccProps } from './model/VccProps';
+import { Theme } from './model/Theme';
+
+const IPCScope = 'KOJI_CUSTOM_VCC';
+
+enum IPCEvent {
+  LOADED = 'loaded',
+
+  CHANGE = 'onChange',
+  COMMIT = 'onCommit',
+  FOCUS = 'onFocus',
+  BLUR = 'onBlur',
+
+  SHOW_MODAL = 'onModal',
+
+  PROPS_UPDATED = 'props_updated',
+  THEME_SET = 'theme_set',
+  MODAL_RESOLVED = 'modal_resolved',
+}
+
+export default class CustomVCC {
+  private props: VccProps = {
+    type: '',
+    name: '',
+    value: null,
+    scope: '',
+    variableName: '',
+    options: {},
+    collaborationDecoration: {},
+  };
+
+  private theme: Theme = {
+    colors: {},
+    mixins: {},
+  };
+
+  private currentModalId?: string;
+  private modalCallback?: (returnValue: any) => void;
+
+  private themeCallback?: (theme: Theme) => void;
+  private updateCallback?: (props: VccProps) => void;
+
+  constructor() {
+    // Set the VCC's key for communicating back to the parent
+    try {
+      const queryString: {[index: string]: any} = window.location.search.replace('?', '').split('&').reduce((acc: {[index: string]: any}, cur) => {
+        const [k, v] = cur.split('=');
+        acc[k] = v;
+        return acc;
+      }, {});
+      this.props.variableName = queryString.key;
+    } catch (err) {
+    //
+    }
+
+    this.addListener();
+  }
+
+  public register(width?: any, height?: any) {
+    this.postMessage(IPCEvent.LOADED, {
+      height,
+      width,
+    });
+  }
+
+////////////////////////////////////////////////////////////////////////////////
+// Callbacks
+  public onUpdate(callback: (props: VccProps) => void) {
+    this.updateCallback = callback;
+  }
+
+  public onTheme(callback: (theme: Theme) => void) {
+    this.themeCallback = callback;
+  }
+
+////////////////////////////////////////////////////////////////////////////////
+// Mutations
+  public change(newValue: any) {
+    this.postMessage(IPCEvent.CHANGE, {
+      value: newValue,
+    });
+  }
+
+  public save() {
+    this.postMessage(IPCEvent.COMMIT);
+  }
+
+  public focus() {
+    this.postMessage(IPCEvent.FOCUS);
+  }
+
+  public blur() {
+    this.postMessage(IPCEvent.BLUR);
+  }
+
+////////////////////////////////////////////////////////////////////////////////
+// Shared modals
+  public showModal(type: 'image'|'sound'|'obj', currentValue: any, onComplete: (returnValue: any) => void) {
+    this.modalCallback = onComplete;
+    this.currentModalId = uuid.v4();
+    this.postMessage(IPCEvent.SHOW_MODAL, {
+      type,
+      callbackId: this.currentModalId,
+      currentValue,
+    });
+  }
+
+////////////////////////////////////////////////////////////////////////////////
+// IPC methods
+  private addListener() {
+    window.addEventListener('message', ({ data }) => {
+      if (data._type !== IPCScope) {
+        return;
+      }
+
+      const {
+        event,
+        payload,
+      } = data;
+
+      if (event === IPCEvent.PROPS_UPDATED) {
+        this.props = payload;
+        if (this.updateCallback) {
+          this.updateCallback(this.props);
+        }
+      }
+
+      if (event === IPCEvent.THEME_SET) {
+        this.theme = payload;
+        if (this.themeCallback) {
+          this.themeCallback(this.theme);
+        }
+      }
+
+      if (event === IPCEvent.MODAL_RESOLVED) {
+        const {
+          callbackId,
+          newValue,
+        } = payload;
+        if (this.modalCallback && callbackId === this.currentModalId) {
+          this.modalCallback(newValue);
+          this.currentModalId = undefined;
+          this.modalCallback = undefined;
+        }
+      }
+    });
+  }
+
+  private postMessage(event: string, payload?: any) {
+    if (window.parent) {
+      window.parent.postMessage({
+        _type: IPCScope,
+        _key: this.props.variableName,
+        event,
+        payload: payload || null,
+      }, '*');
+    }
+  }
+}
