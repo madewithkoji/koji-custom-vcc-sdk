@@ -140,15 +140,11 @@ export default class CustomVCC {
     this.currentUploadId = uuid.v4();
 
     const fileReader = new FileReader();
-    fileReader.onload = (event) => {
-      if (!event.target) {
-        return;
-      }
-
+    fileReader.onload = () => {
       this.postMessage(IPCEvent.UPLOAD_FILE, {
         callbackId: this.currentUploadId,
         fileName,
-        fileData: event.target.result,
+        fileData: fileReader.result,
       });
     };
     fileReader.readAsArrayBuffer(file);
