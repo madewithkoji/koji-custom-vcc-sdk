@@ -18,6 +18,9 @@ enum IPCEvent {
   PROPS_UPDATED = 'props_updated',
   THEME_SET = 'theme_set',
   MODAL_RESOLVED = 'modal_resolved',
+
+  UPLOAD_FILE = 'upload_file',
+  FILE_UPLOADED = 'file_uploaded',
 }
 
 export default class CustomVCC {
@@ -46,6 +49,9 @@ export default class CustomVCC {
 
   private currentModalId?: string;
   private modalCallback?: (returnValue: any) => void;
+
+  private currentUploadId?: string;
+  private uploadCallback?: (url: string) => void;
 
   private themeCallback?: (theme: Theme) => void;
   private updateCallback?: (props: VccProps) => void;
@@ -128,6 +134,18 @@ export default class CustomVCC {
   }
 
 ////////////////////////////////////////////////////////////////////////////////
+// Shared methods
+  public uploadFile(blob: Blob, fileName: string, onComplete: (url: string) => void) {
+    this.uploadCallback = onComplete;
+    this.currentUploadId = uuid.v4();
+    this.postMessage(IPCEvent.UPLOAD_FILE, {
+      callbackId: this.currentUploadId,
+      fileName,
+      blob,
+    });
+  }
+
+////////////////////////////////////////////////////////////////////////////////
 // IPC methods
   private addListener() {
     window.addEventListener('message', ({ data }) => {
@@ -170,6 +188,18 @@ export default class CustomVCC {
           this.modalCallback(newValue);
           this.currentModalId = undefined;
           this.modalCallback = undefined;
+        }
+      }
+
+      if (event === IPCEvent.FILE_UPLOADED) {
+        const {
+          callbackId,
+          url,
+        } = payload;
+        if (this.uploadCallback && callbackId === this.currentUploadId) {
+          this.uploadCallback(url);
+          this.currentUploadId = undefined;
+          this.uploadCallback = undefined;
         }
       }
     });
