@@ -67,6 +67,16 @@ customVcc.show('image', currentImageUrl, (newUrl) => {
 });
 ```
 
+### Uploading a file
+
+You can upload a file or blob using:
+
+```
+customVcc.uploadFile(blob, fileName, (url) => {
+  // url of the uploaded file
+});
+```
+
 ## Publishing a VCC
 
 To publish a VCC, it must be hosted on a `koji-vccs.com` subdomain. To do this, publish your app as normal in Koji, then navigate to the "Custom Domains" section under "Tools". Choose "Add Domain" and select "koji-vccs.com" as the root domain. Specify a unique subdomain and save the domain. You can now use your VCC in projects by specifying the type as `custom<subdomain>` where `subdomain` is the subdomain you chose.

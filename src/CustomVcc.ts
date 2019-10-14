@@ -135,14 +135,23 @@ export default class CustomVCC {
 
 ////////////////////////////////////////////////////////////////////////////////
 // Shared methods
-  public uploadFile(blob: Blob, fileName: string, onComplete: (url: string) => void) {
+  public uploadFile(file: Blob, fileName: string, onComplete: (url: string) => void) {
     this.uploadCallback = onComplete;
     this.currentUploadId = uuid.v4();
-    this.postMessage(IPCEvent.UPLOAD_FILE, {
-      callbackId: this.currentUploadId,
-      fileName,
-      blob,
-    });
+
+    const fileReader = new FileReader();
+    fileReader.onload = (event) => {
+      if (!event.target) {
+        return;
+      }
+
+      this.postMessage(IPCEvent.UPLOAD_FILE, {
+        callbackId: this.currentUploadId,
+        fileName,
+        fileData: event.target.result,
+      });
+    };
+    fileReader.readAsArrayBuffer(file);
   }
 
 ////////////////////////////////////////////////////////////////////////////////
