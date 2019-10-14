@@ -59,7 +59,7 @@ Optional methods include:
 
 ### Modals
 
-You can trigger the `image`, `sound`, and `obj` (3D) modals using this SDK and specify callbacks when those modals have been resolved:
+You can trigger the `image`, `sound`, `file`, and `obj` (3D) modals using this SDK and specify callbacks when those modals have been resolved:
 
 ```
 customVcc.show('image', currentImageUrl, (newUrl) => {

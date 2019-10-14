@@ -1,6 +1,6 @@
 {
   "name": "@withkoji/custom-vcc-sdk",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Library for creating custom Koji VCCs",
   "main": "./dist/index.js",
   "repository": {

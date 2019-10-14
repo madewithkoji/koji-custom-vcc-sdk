@@ -117,7 +117,7 @@ export default class CustomVCC {
 
 ////////////////////////////////////////////////////////////////////////////////
 // Shared modals
-  public showModal(type: 'image'|'sound'|'obj', currentValue: any, onComplete: (returnValue: any) => void) {
+  public showModal(type: 'image'|'sound'|'obj'|'file', currentValue: any, onComplete: (returnValue: any) => void) {
     this.modalCallback = onComplete;
     this.currentModalId = uuid.v4();
     this.postMessage(IPCEvent.SHOW_MODAL, {
