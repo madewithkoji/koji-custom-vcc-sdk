@@ -62,7 +62,7 @@ Optional methods include:
 You can trigger the `image`, `sound`, `file`, and `obj` (3D) modals using this SDK and specify callbacks when those modals have been resolved:
 
 ```
-customVcc.show('image', currentImageUrl, (newUrl) => {
+customVcc.showModal('image', currentImageUrl, (newUrl) => {
   // change and save VCC to use the new URL value
 });
 ```
