@@ -14,5 +14,5 @@ export interface VccProps {
   };
   _config: {
     [index: string]: any;
-  }
+  };
 }
