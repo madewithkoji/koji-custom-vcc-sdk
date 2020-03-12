@@ -12,4 +12,7 @@ export interface VccProps {
   collaborationDecoration: {
     [index: string]: any;
   };
+  _config: {
+    [index: string]: any;
+  }
 }
