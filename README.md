@@ -28,6 +28,7 @@ customVcc.onUpdate((props) => {
     variableName, // resolved variable name of this vcc (`scope.key`)
     options, // an object containing any options passed in `typeOptions`
     collaborationDecoration, // an object containing any collaborators currently focused on this control
+    _config, // the full VCC configuration file. Generally this is not needed, as most controls should be fully isolated to a single value, but this can be useful when creating more complex custom controls like map builders
   } = props;
 });
 ```

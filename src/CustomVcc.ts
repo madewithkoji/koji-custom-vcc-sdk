@@ -33,6 +33,7 @@ export default class CustomVCC {
     variableName: '',
     options: {},
     collaborationDecoration: {},
+    _config: {},
   };
   public get props(): VccProps {
     return this._props;
