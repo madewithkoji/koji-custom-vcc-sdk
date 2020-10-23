@@ -13,11 +13,8 @@ enum IPCEvent {
   FOCUS = 'onFocus',
   BLUR = 'onBlur',
 
-  SHOW_MODAL = 'onModal',
-
   PROPS_UPDATED = 'props_updated',
   THEME_SET = 'theme_set',
-  MODAL_RESOLVED = 'modal_resolved',
 
   UPLOAD_FILE = 'upload_file',
   FILE_UPLOADED = 'file_uploaded',
@@ -47,9 +44,6 @@ export default class CustomVCC {
   public get theme(): Theme {
     return this._theme;
   }
-
-  private currentModalId?: string;
-  private modalCallback?: (returnValue: any) => void;
 
   private currentUploadId?: string;
   private uploadCallback?: (url: string) => void;
@@ -123,18 +117,6 @@ export default class CustomVCC {
   }
 
 ////////////////////////////////////////////////////////////////////////////////
-// Shared modals
-  public showModal(type: 'image'|'sound'|'obj'|'file', currentValue: any, onComplete: (returnValue: any) => void) {
-    this.modalCallback = onComplete;
-    this.currentModalId = uuid.v4();
-    this.postMessage(IPCEvent.SHOW_MODAL, {
-      type,
-      callbackId: this.currentModalId,
-      currentValue,
-    });
-  }
-
-////////////////////////////////////////////////////////////////////////////////
 // Shared methods
   public uploadFile(file: Blob, fileName: string, onComplete: (url: string) => void) {
     this.uploadCallback = onComplete;
@@ -182,18 +164,6 @@ export default class CustomVCC {
         this._theme = payload;
         if (this.themeCallback) {
           this.themeCallback(this.theme);
-        }
-      }
-
-      if (event === IPCEvent.MODAL_RESOLVED) {
-        const {
-          callbackId,
-          newValue,
-        } = payload;
-        if (this.modalCallback && callbackId === this.currentModalId) {
-          this.modalCallback(newValue);
-          this.currentModalId = undefined;
-          this.modalCallback = undefined;
         }
       }
 
