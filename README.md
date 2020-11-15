@@ -1,4 +1,5 @@
 # Koji Custom VCC SDK
+![npm (scoped)](https://img.shields.io/npm/v/@withkoji/custom-vcc-sdk?color=green&style=flat-square)
 
 **Library for creating custom Koji VCCs.**
 
