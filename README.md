@@ -1,11 +1,11 @@
 # Koji Custom VCC SDK
 ![npm (scoped)](https://img.shields.io/npm/v/@withkoji/custom-vcc-sdk?color=green&style=flat-square)
 
-**Library for creating custom Koji VCCs.**
+**Library for creating custom controls to use in Koji templates.**
 
 ## Overview
 
-The @withkoji/custom-vcc-sdk package enables you to implement custom Visual Customization Controls (VCCs) for your template.
+The @withkoji/custom-vcc-sdk package enables you to implement custom controls for capturing user input on the frontend of your Koji template.
 With this package, you can provide customizations that match closely with the application you are developing.
 For example, some Koji templates provide tile map editors, sound enhancers, or custom avatar creators to enhance the interactivity for remixers.
 
@@ -19,14 +19,17 @@ npm install --save @withkoji/custom-vcc-sdk
 
 ## Basic use
 
-### CustomVcc
+### Building custom controls
 
-Import and instantiate `CustomVcc`.
+Import and instantiate CustomVcc.
+
 ```
 import CustomVcc from '@withkoji/custom-vcc-sdk'
 const customVcc = new CustomVcc();
 ```
+
 Assign event listeners for updates.
+
 ```
 customVcc.onTheme((theme) => {
   // Listen to Koji theme to match the styles in your VCC
@@ -37,26 +40,37 @@ customVcc.onUpdate((props) => {
 });
 ```
 
-When the custom VCC has loaded, register it to trigger the `on` events from the parent editor.
+When the custom control has loaded, register it to trigger events from the parent editor.
+
 ```
 customVcc.register(width, height);
 ```
 
 When a user changes the value, update it and save the file.
+
 ```
 customVcc.change(newValue);
 customVcc.save();
 ```
 
-### Publish a custom VCC
+### Using custom controls
 
-Custom VCCs require a custom domain to be accessible to other Koji templates. In the Koji editor, and add a domain under the `koji-vccs.com` root domain. Then, publish the project.
+To make a custom control accessible to Koji templates, you must serve it at a custom domain.
+After you publish the project, add a subdomain under the `koji-vccs.com` root domain.
 
-After you publish your custom VCC, you can use it in a Koji template with the VCC type: `"type": "custom<YOUR-DOMAIN-NAME>"`.
+Then, you can use the control in a Koji template in one of these ways.
+
+* (Recommended) With the @withkoji/core package, call the `Koji.ui.capture.custom` method with the subdomain name. For example:
+
+ `const music = await Koji.ui.capture.custom({ name: 'scloud' });`
+
+* (Deprecated) With the @withkoji/vcc package, use the subdomain name as the VCC type. For example:
+
+ `"type": "custom<YOUR-DOMAIN-NAME>"`.
 
 ## Related resources
 
-* [Package documentation](https://developer.withkoji.com/reference/packages/withkoji-custom-vcc-sdk)
+* [Package documentation](https://developer.withkoji.com/reference/customvcc/withkoji-custom-vcc-sdk)
 * [Building your first custom VCC](https://developer.withkoji.com/docs/customizations/build-custom-vcc)
 * [Custom VCC blueprint](https://developer.withkoji.com/docs/blueprints/cat-selector-blueprint)
 * [Koji homepage](http://withkoji.com/)
