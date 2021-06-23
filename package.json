@@ -1,7 +1,7 @@
 {
   "name": "@withkoji/custom-vcc-sdk",
-  "version": "0.0.10",
-  "description": "Library for creating custom controls to use in Koji templates",
+  "version": "0.0.11",
+  "description": "Library for creating custom controls to use in Koji apps",
   "main": "./dist/index.js",
   "repository": {
     "type": "git",
