@@ -1,20 +1,20 @@
 # Koji Custom VCC SDK
 ![npm (scoped)](https://img.shields.io/npm/v/@withkoji/custom-vcc-sdk?color=green&style=flat-square)
 
-**Library for creating custom controls to use in Koji templates.**
+**Library for creating custom controls to use in Koji apps.**
 
 ## Overview
 
-The @withkoji/custom-vcc-sdk package enables you to implement custom controls for capturing user input on the frontend of your Koji template.
-With this package, you can provide customizations that match closely with the application you are developing.
-For example, some Koji templates provide tile map editors, sound enhancers, or custom avatar creators to enhance the interactivity for remixers.
+The @withkoji/custom-vcc-sdk package enables you to implement custom controls for capturing user input on the frontend of your Koji app.
+With this package, you can provide customizations that are better suited for the application you are developing.
+For example, some Koji apps provide tile map editors, sound enhancers, or custom avatar creators to enhance the interactivity in the app.
 
 ## Installation
 
 Install the package in your Koji project.
 
 ```
-npm install --save @withkoji/custom-vcc-sdk
+npm install @withkoji/custom-vcc-sdk
 ```
 
 ## Basic use
@@ -55,10 +55,10 @@ customVcc.save();
 
 ### Using custom controls
 
-To make a custom control accessible to Koji templates, you must serve it at a custom domain.
+To make a custom control accessible to other Koji apps, you must serve it at a custom domain.
 After you publish the project, add a subdomain under the `koji-vccs.com` root domain.
 
-Then, you can use the control in a Koji template in one of these ways.
+Then, you can use the control in a Koji app in one of these ways.
 
 * (Recommended) With the @withkoji/core package, call the `Koji.ui.capture.custom` method with the subdomain name. For example:
 
@@ -71,8 +71,7 @@ Then, you can use the control in a Koji template in one of these ways.
 ## Related resources
 
 * [Package documentation](https://developer.withkoji.com/reference/customvcc/withkoji-custom-vcc-sdk)
-* [Building your first custom VCC](https://developer.withkoji.com/docs/customizations/build-custom-vcc)
-* [Custom VCC blueprint](https://developer.withkoji.com/docs/blueprints/cat-selector-blueprint)
+* [Building custom controls](https://developer.withkoji.com/docs/dev-guides/build-custom-controls)
 * [Koji homepage](http://withkoji.com/)
 
 ## Contributions and questions
